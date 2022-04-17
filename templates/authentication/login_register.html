@@ -1,0 +1,96 @@
+{% extends 'template.html' %}
+{% block title %}Prijava / Registracija{% endblock %}
+  {% block head %}
+    {{ super() }}
+  {% endblock %}
+
+{% block body %}
+
+
+
+      <br><br><br>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+         {% for category,message in messages %}
+         <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{ message }}
+        </div>
+         {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <h1 class="mb-5">Prijava / Registracija</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">PRIJAVA NA RAČUN</h5>
+                    <div class="card">
+                        <div class="card-body">
+                          <form action="{{ url_for('authentication_blueprint.prijava') }}" method="POST" style="max-width: 35%; margin: 0 auto; min-width: 300px;">
+                            {{ login_form.hidden_tag() }}
+                            <div class="form-group">
+                              {{ login_form.username.label }} 
+                              {{ login_form.username }}
+                            </div>
+
+                            <div class="form-group">
+                              {{ login_form.password.label }}
+                              {{ login_form.password }}
+                            </div>
+                            <a href="">Zaboravili ste lozinku?</a>
+                            
+                            <button class="btn btn-primary btn-block mt-3 mb-3" type="submit">PRIJAVA</button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">KREIRAJTE NOVI RAČUN </h5>
+                    <div class="card">
+                        <div class="card-body">
+                          <form action="{{ url_for('authentication_blueprint.registracija') }}" method="POST" style="max-width: 35%; margin: 0 auto; min-width: 300px;">
+                            {{ register_form.hidden_tag() }}
+                            <div class="form-group">
+                              {{ register_form.username.label }} 
+                              {{ register_form.username }}
+                              <small id="passwordHelp" class="form-text text-muted">Korisničko ime nije osetljivo na velika i mala slova</small>
+                            </div>
+                            
+                            <div class="form-group">
+                              {{ register_form.email.label }}
+                              {{ register_form.email }}
+                            </div>
+
+                            <div class="form-group">
+                              {{ register_form.password.label }}
+                              {{ register_form.password }}
+                              <small id="passwordHelp" class="form-text text-muted">Lozinka mora sadržavati minimalno 8 znakova</small>
+                            </div>
+                            
+                            <div class="form-group">
+                              {{ register_form.confirm_password.label }}
+                              {{ register_form.confirm_password }}
+                            </div>
+                            
+                            <button class="btn btn-primary btn-block mt-3 mb-3" type="submit">REGISTRACIJA</button>
+                        </form>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+</html>

@@ -1,0 +1,22 @@
+{% extends admin_base_template %}
+
+{% block head_css %}
+{{ super() }}
+{% endblock %}
+
+<div class="collapse navbar-collapse" id="admin-navbar-collapse">
+    {% block main_menu %}
+    <ul class="nav navbar-nav">
+      <li><a href="{{ url_for('views_blueprint.home') }}">Pocetna Strana</a></li>
+      {{ layout.menu() }}
+    </ul>
+    {% endblock %}
+
+    {% block menu_links %}
+    <ul class="nav navbar-nav navbar-right">
+      {{ layout.menu_links() }}
+    </ul>
+    {% endblock %}
+    {% block access_control %}
+    {% endblock %}
+  </div>
