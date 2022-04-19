@@ -7,7 +7,7 @@ from blueprints.views import views_blueprint
 from blueprints.authentication import authentication_blueprint
 from models import *
 from config import db
-from admin import AdminModelView,MyAdminIndexView
+from admin import AdminModelView,AdminModelViewProizvod,AdminModelViewCena,MyAdminIndexView
 
 import os
 
@@ -32,7 +32,8 @@ def load_user(user_id):
 admin = Admin(app,name='WebShop',template_mode='bootstrap3',index_view=MyAdminIndexView())
 admin.add_view(AdminModelView(User,db.session))
 admin.add_view(AdminModelView(Podaci,db.session))
-admin.add_view(AdminModelView(Proizvod,db.session))
+admin.add_view(AdminModelViewProizvod(Proizvod,db.session))
+admin.add_view(AdminModelViewCena(Cena,db.session))
 
 
 app.register_blueprint(views_blueprint)

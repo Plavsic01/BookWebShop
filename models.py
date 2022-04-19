@@ -31,11 +31,26 @@ class Podaci(db.Model):
 
 class Proizvod(db.Model):
     __tablename__ = "proizvod"
-    id = db.Column(db.Integer,primary_key=True)
     naziv = db.Column(db.String(60),nullable=False)
     opis = db.Column(db.Text,nullable=False)
+    # mozda jos dodati duzi opis
+    # kad se klikne na knjigu da bude detaljniji opis
     img = db.Column(db.String(300),nullable=False)
-    product_id = db.Column(db.String(60),nullable=False)
-    price_id = db.Column(db.String(60),nullable=False)
-    date_created = db.Column(db.DateTime(timezone=True),server_default=func.now())      
+    product_id = db.Column(db.String(60),nullable=False,primary_key=True)
+    date_created = db.Column(db.DateTime(timezone=True),server_default=func.now())
+    cena = db.relationship('Cena',cascade="all,delete",backref='proizvod')
+         
+    def __repr__(self) -> str:
+        return f'Knjiga: {self.naziv}'
 
+
+class Cena(db.Model):
+    __tablename__ = "cena"
+    id = db.Column(db.Integer,primary_key=True)
+    price_id = db.Column(db.String(60),nullable=True)
+    cena_proizvoda = db.Column(db.Integer,nullable=False)
+    valuta = db.Column(db.String(3),nullable=False)
+    proizvod_id = db.Column(db.String(60),db.ForeignKey('proizvod.product_id'),nullable=False,unique=True) 
+    
+    def __repr__(self) -> str:
+        return f'ID: {self.price_id} Cena: {self.cena_proizvoda} HRK'

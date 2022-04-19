@@ -1,0 +1,9 @@
+{% macro delete_row(action, row_id, row) %}
+<form class="icon" method="POST" action="{{ get_url('.delete_view') }}">
+  <input type="hidden" name="row_id" value="{{ get_pk_value(row) }}"/>
+  <button type="submit" title="{{ _gettext('Delete record') }}">
+    <span class="glyphicon glyphicon-delete"></span>
+  </button>
+</form>
+{% endmacro %}
+

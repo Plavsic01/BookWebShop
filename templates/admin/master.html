@@ -7,8 +7,10 @@
 <div class="collapse navbar-collapse" id="admin-navbar-collapse">
     {% block main_menu %}
     <ul class="nav navbar-nav">
-      <li><a href="{{ url_for('views_blueprint.home') }}">Pocetna Strana</a></li>
-      {{ layout.menu() }}
+      {{ layout.menu() }}    
+      <li><a href="{{ url_for('admin.kreiraj_proizvod') }}">Kreiraj Proizvod</a></li>
+      <li><a href="{{ url_for('admin.kreiraj_cenu') }}">Kreiraj Cenu</a></li>
+      <li><a href="{{ url_for('views_blueprint.home') }}">Nazad Na WebShop</a></li>
     </ul>
     {% endblock %}
 
@@ -20,3 +22,6 @@
     {% block access_control %}
     {% endblock %}
   </div>
+
+
+  
