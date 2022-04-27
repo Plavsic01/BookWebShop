@@ -1,13 +1,13 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
 from blueprints.views import views_blueprint
 from blueprints.authentication import authentication_blueprint
+from blueprints.user import user_blueprint
 from models import *
 from config import db
-from admin import AdminModelView,AdminModelViewProizvod,AdminModelViewCena,MyAdminIndexView
+from admin import AdminModelView,AdminModelViewProizvod,MyAdminIndexView
 
 import os
 
@@ -28,16 +28,20 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('authentication_blueprint.prijava_registracija'))
 
 admin = Admin(app,name='WebShop',template_mode='bootstrap3',index_view=MyAdminIndexView())
 admin.add_view(AdminModelView(User,db.session))
 admin.add_view(AdminModelView(Podaci,db.session))
 admin.add_view(AdminModelViewProizvod(Proizvod,db.session))
-admin.add_view(AdminModelViewCena(Cena,db.session))
+
 
 
 app.register_blueprint(views_blueprint)
 app.register_blueprint(authentication_blueprint)
+app.register_blueprint(user_blueprint)
 
 
 if __name__ == "__main__":

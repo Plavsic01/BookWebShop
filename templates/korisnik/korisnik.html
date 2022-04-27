@@ -1,0 +1,147 @@
+{% extends 'template.html' %}
+{% block title %}Moj Profil{% endblock %}
+  {% block head %}
+    {{ super() }}
+    <style>
+        button:focus {
+        outline: none;
+        box-shadow: none;
+}
+    </style>
+  {% endblock %}
+
+
+{% block body %}
+
+<br><br>
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+         {% for category,message in messages %}
+         <div class="alert alert-{{ category }} alert-dismissible fade show" style="margin-top:10px;" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{ message }}
+        </div>
+         {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+
+      <div class="pb-5 mb-1 pt-5 container">
+          <div class="row">
+              <div class="col-sm-12">
+                  <h1>Moj Profil</h1>
+                  <br>
+                  <div class="row">
+                      <div class="col-md-3">
+                          <div class="list-group" id="tablist">
+                              <a class="list-group-item list-group-item-action active" href="#podaci" data-toggle="list" role="tab">Moji podaci</a>
+                              <a class="list-group-item list-group-item-action" href="#adresa" data-toggle="list" role="tab">Moja adresa</a>
+                              <a class="list-group-item list-group-item-action" href="#narudzbina" data-toggle="list" role="tab">Moje narudžbe</a>
+                          </div>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="podaci" role="tabpanel">
+                                <br>
+                                <h3>Moji Podaci</h3>
+                                <hr>
+                                <form action="{{ url_for('user_blueprint.izmeni_korisnik') }}" method="POST" style="max-width: 100%;">
+                                    {{ form_podaci.hidden_tag() }}
+                                    <div class="form-group">
+                                    {{ form_podaci.ime.label }}
+                                    {{ form_podaci.ime }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.prezime.label }}
+                                        {{ form_podaci.prezime }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.email.label }}
+                                        {{ form_podaci.email(readonly=True) }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.broj_telefona.label }}
+                                        {{ form_podaci.broj_telefona }}
+                                    </div>
+                                    
+                                    <div>
+                                        <button class="btn btn-primary w-100" type="submit">DODAJ/IZMJENI PODATKE</button>
+                                    </div>
+                                </form>
+                                <br>
+                                <br>
+                                <h3>Promjena lozinke</h3>
+                                <form action="{{ url_for('user_blueprint.promena_lozinke') }}" method="POST" style="max-width: 100%;">
+                                    {{ form_promena.hidden_tag() }}
+
+                                    <div class="form-group">
+                                    {{ form_promena.trenutna_lozinka.label }}
+                                    {{ form_promena.trenutna_lozinka }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_promena.nova_lozinka.label }}
+                                        {{ form_promena.nova_lozinka }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_promena.ponovljena_nova_lozinka.label }}
+                                        {{ form_promena.ponovljena_nova_lozinka }}
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-primary w-100" type="submit">PROMJENI LOZINKU</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="adresa" role="tabpanel">
+                                <br>
+                                <h3>Moja Adresa</h3>
+                                <hr>
+                                <form action="{{ url_for('user_blueprint.korisnik_adresa') }}" method="POST" style="max-width: 100%;">
+                                    {{ form_podaci.hidden_tag() }}
+                                    
+                                    <div class="form-group">
+                                        {{ form_podaci.ulica.label }}
+                                        {{ form_podaci.ulica }}
+                                      </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.kucni_broj.label }}
+                                        {{ form_podaci.kucni_broj }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.drzava.label }}
+                                        {{ form_podaci.drzava }}
+                                      </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.grad.label }}
+                                        {{ form_podaci.grad }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {{ form_podaci.postanski_broj.label }}
+                                        {{ form_podaci.postanski_broj }}
+                                    </div>
+
+                                    
+                                    <div>
+                                        <button class="btn btn-primary w-100" type="submit">DODAJ/IZMJENI ADRESU</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="narudzbina" role="tabpanel">Narudžbe</div>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+{% endblock %}
+</html>

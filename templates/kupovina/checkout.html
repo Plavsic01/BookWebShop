@@ -1,0 +1,96 @@
+{% extends 'template.html' %}
+{% block title %}Košarica{% endblock %}
+  {% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+  {% endblock %}
+
+{% block body %}
+<br><br>
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+         {% for category,message in messages %}
+         <div class="alert alert-{{ category }} alert-dismissible fade show" style="margin-top:10px;" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{ message }}
+        </div>
+         {% endfor %}
+      {% endif %}
+      {% endwith %}
+    <br>
+         
+<!-- Page Content -->
+<div class="pb-5 mb-1 pt-5 container">
+  <div class="row">
+      <div class="col-sm-12">
+
+  {% if proizvodi is not none %}
+  <!-- PROVERITI NONE I DA LI JE PRAZNA LISTA -->
+  <div class="row">
+      <!-- Shopping Cart-->
+  <div class="">
+    <table class="table border-bottom">
+      <thead>
+        <tr>
+          <th>Naziv proizvoda</th>
+          <th class="text-center">Količina</th>
+          <th class="text-center">Cijena</th>
+          <th class="text-center"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proizvod in proizvodi %}
+   <tr>
+  <td class="grid-container" style="margin-top:-1px">
+    <div class="grid-child">
+      <img src="{{ proizvod['price_data']['product_data']['images'][0] }}" style="width:150px;" alt="Proizvod">
+    </div>
+      <div class="grid-child">
+        <p>
+          {{ proizvod['price_data']['product_data']['name'] }}
+        </p>
+    </div>
+  </td>
+  <td class="text-center">
+    <div class="count-input">
+      <input type="number" readonly min="1" step="1" value="1" class="form-control form-control-rounded">
+    </div>
+  </td>
+  <td class="text-center text-lg text-medium">
+    {{ "%.2f"|format(proizvod['price_data']['unit_amount'] / 100) }} kn
+  </td>
+  <td>
+    <div>
+     <a href="{{ url_for('views_blueprint.kosarica') }}" onclick="izbrisi_iz_korpe('{{ proizvod['price_data']['product_data']['name'] }}')"><i class="fa fa-trash" aria-hidden="true"></i></a>
+    </div>
+  </td>
+    </tr>
+    {% endfor %}
+      </tbody>
+    </table>
+
+    
+    <div class="text-right" style="padding:10px;">
+      <a href="{{ url_for('views_blueprint.kosarica') }}" onclick="izbrisi_korpu()" class="btn btn-outline-danger">OČISTI KOŠARICU</a>
+      <a href="{{ url_for('views_blueprint.kupovina_podaci') }}" class="btn btn-outline-secondary">PLAĆANJE</a>
+    </div>
+    {% else %}
+
+    <div style="text-align: center; margin-top: 30px;">
+    <i class="fa fa-shopping-cart" style="font-size:300px;opacity:0.3;"></i>
+    <br>
+    <br>
+    <h3>Vaša košarica je trenutno prazna</h3>
+  </div>
+    {% endif %}
+ 
+      
+  
+    <script src="{{ url_for('static',filename='dodaj_u_korpu.js') }}"></script>
+    <script src="{{ url_for('static',filename='izbrisi_iz_korpe.js') }}"></script>
+{% endblock  %}
+</html>
+
+

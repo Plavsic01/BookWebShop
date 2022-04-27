@@ -56,19 +56,30 @@
     </div>
 
     <div class="d-flex flex-wrap align-items-center justify-content-center">
-      {% for product in products %}
+      {% for proizvod in proizvodi %}
+        {% if proizvod['obrisan'] is false  %}
         <div class="m-3 card">
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="{{ product['images'][0] }}" alt="Card image cap">
+            <div class="card" style="width: 17rem;">
+                <img class="card-img-top" src="{{ proizvod['img'] }}" alt="Card image cap">
                 <div class="card-body">
-                  <h5 class="card-title">{{ product['name'] }}</h5>
-                  <p class="card-text">{{ product['description'] }}</p>
-                  <a href="#" class="btn btn-primary">Dodaj U Korpu</a>
+                  <h5 class="card-title">{{ proizvod['naziv'] }}</h5>
+                  <p class="card-text">{{ proizvod['opis'] }}</p>
+                  <p class="card-text">{{ "%.2f"|format(proizvod['cena_proizvoda'] / 100) }} kn</p>
+                  {% if proizvod['dostupna_kolicina'] == 0 %}
+                  <button class="btn btn-outline-secondary" type="submit">Trenutno Nedostupno</button>
+                  {% else %}
+                  <button class="btn btn-outline-primary" id="dugme-{{ loop.index }}" onclick="dodaj_u_korpu('{{ proizvod['id'] }}',{{ loop.index }})" type="submit">U KOŠARICU</button>
+                  {% endif %}
                 </div>
               </div>
         </div>
+        {% endif %}
         {% endfor %}
       </div>
-
+      
+      <script src="{{ url_for('static',filename='dodaj_u_korpu.js') }}"></script>
 {% endblock  %}
 </html>
+
+
+

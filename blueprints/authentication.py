@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,redirect,url_for,flash
+from flask import Blueprint,render_template,redirect,url_for,flash,session
 from forms import RegisterForm,LoginForm
 from werkzeug.security import generate_password_hash,check_password_hash
 from models import User
@@ -72,5 +72,11 @@ def admin_dashboard():
 @login_required
 def odjava():
     logout_user()
+    if 'korpa' in session:
+        session.pop('korpa')
+
+    if 'kolicina' in session:
+        session['kolicina'].update({'kolicina':0})
+            
     flash('Upravo ste se odjavili!',category='warning')
     return redirect(url_for('views_blueprint.home'))

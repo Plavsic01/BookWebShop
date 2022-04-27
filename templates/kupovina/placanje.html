@@ -1,0 +1,93 @@
+{% extends 'template_without_footer.html' %}
+{% block title %}Pocetna Strana{% endblock %}
+  {% block head %}
+    {{ super() }}
+    
+  {% endblock %}
+
+
+{% block body %}
+
+<br><br><br><br>
+<div class="text-center">
+    <div class="row">
+    <div class="col-sm-12">
+        <h1 class="text-center">Plaćanje</h1>                
+        
+    <div class="row">
+        <div class="col-md-6 container">
+            <br>
+    <h4>Unesite adresu za naplatu</h4>
+<hr class="pb-3">
+  <div class="row">
+  <div class="col-sm-6">
+<form action="{{ url_for('.kupovina_podaci') }}" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.ime.label }}
+      {{ form.ime }}
+      <small class="text-muted">* Obavezan unos imena</small>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="form-group">
+        {{ form.prezime.label }}
+        {{ form.prezime }}
+        <small class="text-muted">* Obavezan unos prezimena</small>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="form-group">
+      {{ form.broj_telefona.label }}
+      {{ form.broj_telefona }}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="form-group">
+      {{ form.drzava.label }}
+      {{ form.drzava }}
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-8">
+    <div class="form-group">
+      {{ form.ulica.label }}
+      {{ form.ulica }}
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="form-group">
+        {{ form.kucni_broj.label }}
+        {{ form.kucni_broj }}
+    </div>
+  </div>
+</div>
+
+<div class="row pb-5">
+  <div class="col-sm-6">
+    <div class="form-group">
+        {{ form.grad.label }}
+        {{ form.grad }}
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="form-group">
+        {{ form.postanski_broj.label }}
+        {{ form.postanski_broj }}
+    </div>
+  </div>
+</div>
+
+<div class="text-center">
+    <button class="btn btn-secondary mx-auto w-100 p-3" type="submit">NARUČUJEM</button>
+</div>
+
+</form>
+<script src="{{ url_for('static',filename='prikazi_korpu.js') }}"></script>
+{% endblock %}
