@@ -64,12 +64,6 @@ def dodaj_u_korpu(prod_id):
 
 @views_blueprint.route("/kosarica")
 def kosarica():
-    user = User.query.filter_by(id=current_user.id).first()
-    proizvod = Proizvod.query.filter_by(id=1).first()
-    narudzba = ProizvodNarudzba(kolicina=1,proizvod_id=proizvod.id)
-    narudzba.proizvod.append(user)
-    db.session.commit()
-
     if 'korpa' in session:
         proizvodi = session['korpa']
         if len(proizvodi) == 0:
