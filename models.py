@@ -30,13 +30,13 @@ class Podaci(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'),unique=True)
 
 
-narudzba = db.Table('narudzba',
-    db.Column('user_id',db.Integer,db.ForeignKey('user.id'),primary_key=True),
-    db.Column('proizvod_id',db.Integer,db.ForeignKey('proizvod.id'),primary_key=True),
-    db.Column('status',db.Boolean,server_default=expression.false(),nullable=False),
-    db.Column('datum',db.DateTime(timezone=True),server_default=func.now()),
-    db.Column('kolicina',db.Integer,nullable=False)
-)
+# narudzba = db.Table('narudzba',
+#     db.Column('user_id',db.Integer,db.ForeignKey('user.id'),primary_key=True),
+#     db.Column('proizvod_id',db.Integer,db.ForeignKey('proizvod.id'),primary_key=True),
+#     db.Column('status',db.Boolean,server_default=expression.false(),nullable=False),
+#     db.Column('datum',db.DateTime(timezone=True),server_default=func.now()),
+#     db.Column('kolicina',db.Integer,nullable=False)
+# )
 
 
 class Proizvod(db.Model):
@@ -52,7 +52,7 @@ class Proizvod(db.Model):
     obrisan = db.Column(db.Boolean,server_default=expression.false(),nullable=False)
     date_created = db.Column(db.DateTime(timezone=True),server_default=func.now())
 
-    podaci = db.relationship('User',secondary=narudzba,backref='proizvodi',cascade="all,delete")
+    # podaci = db.relationship('User',secondary=narudzba,backref='proizvodi',cascade="all,delete")
 
          
     def __repr__(self) -> str:
