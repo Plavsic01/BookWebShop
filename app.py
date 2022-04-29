@@ -6,7 +6,7 @@ from blueprints.views import views_blueprint
 from blueprints.authentication import authentication_blueprint
 from blueprints.user import user_blueprint
 from models import *
-from config import db
+from config import db,mail
 from admin import AdminModelView,AdminModelViewProizvod,MyAdminIndexView
 
 import os
@@ -18,8 +18,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Najbolji3@localhos
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['FLASK_ADMIN_SWATCH'] = 'darkly'
 
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'email'
+app.config['MAIL_PASSWORD'] = 'sifra'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+
 db.init_app(app)
 migrate = Migrate(app,db)
+mail.init_app(app=app)
 login_manager = LoginManager()
 login_manager.login_view = 'authentication_blueprint.prijava'
 login_manager.init_app(app)

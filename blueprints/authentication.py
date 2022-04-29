@@ -2,7 +2,7 @@ from flask import Blueprint,render_template,redirect,url_for,flash,session
 from forms import RegisterForm,LoginForm
 from werkzeug.security import generate_password_hash,check_password_hash
 from models import User
-from config import db
+from config import db,send_registration_mail
 from flask_login import login_required,login_user,logout_user,current_user
 
 
@@ -21,6 +21,7 @@ def prijava_registracija():
 
 @authentication_blueprint.route("/registracija",methods=["POST"])
 def registracija():
+    
     register_form = RegisterForm(prefix='register')
     if register_form.validate_on_submit():
             user_username = User.query.filter_by(username=register_form.username.data).first()
@@ -44,6 +45,7 @@ def registracija():
                 user = User(email=register_form.email.data,username=register_form.username.data,password=hashed_password)
                 db.session.add(user)
                 db.session.commit()
+                send_registration_mail()
                 flash("Uspešna registracija!",'success')
                 return redirect(url_for('authentication_blueprint.prijava_registracija'))    
         

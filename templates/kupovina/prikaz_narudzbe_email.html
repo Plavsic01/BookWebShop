@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hvala Na Narudzbi!</title>
+</head>
+<body>
+    <div class="pb-5 mb-1 pt-5 container">
+        <div class="row">
+            <div class="col-sm-12">
+      
+        <div class="row">
+        <div class="">
+          <table class="table border-bottom">
+            <thead>
+              <tr>
+                <th>Naziv proizvoda</th>
+                <th class="text-center">Količina</th>
+                <th class="text-center">Cijena</th>
+                <th class="text-center"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for proizvod in proizvodi %}
+         <tr>
+        <td class="grid-container" style="margin-top:-1px">
+          <div class="grid-child">
+            <img src="{{ proizvod['price_data']['product_data']['images'][0] }}" style="width:150px;" alt="Proizvod">
+          </div>
+            <div class="grid-child">
+              <p>
+               <strong>{{ proizvod['price_data']['product_data']['name'] }}</strong>
+              </p>
+          </div>
+        </td>
+        <td class="text-center">
+          <div class="count-input">
+            <input type="number" readonly min="1" step="1" value="1" class="form-control form-control-rounded">
+          </div>
+        </td>
+        <td class="text-center text-lg text-medium">
+          {{ "%.2f"|format(proizvod['price_data']['unit_amount'] / 100) }} kn
+        </td>
+          </tr>
+          {% endfor %}
+            </tbody>
+          </table>
+          <h3>Ukupna Cijena: {{ "%.2f"|format(ukupna_cena / 100)  }} kn</h3> 
+</body>
+</html>         
+
+

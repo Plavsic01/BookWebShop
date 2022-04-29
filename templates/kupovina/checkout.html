@@ -71,8 +71,12 @@
       </tbody>
     </table>
 
+    <div class="text-right">
+      <p>Ukupna Cijena: {{ "%.2f"|format(ukupna_cena / 100)  }} kn</p> 
+    </div>
     
     <div class="text-right" style="padding:10px;">
+      <!-- <hr> -->
       <a href="{{ url_for('views_blueprint.kosarica') }}" onclick="izbrisi_korpu()" class="btn btn-outline-danger">OČISTI KOŠARICU</a>
       <a href="{{ url_for('views_blueprint.kupovina_podaci') }}" class="btn btn-outline-secondary">PLAĆANJE</a>
     </div>

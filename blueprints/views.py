@@ -4,7 +4,10 @@ from models import *
 from proizvodi import dobavi_proizvode
 from proizvodi import stripe
 from forms import PodaciForm
-from config import db
+from config import db,send_purchase_email
+import stripe
+
+stripe.api_key = "sk_test_51KpDc2HWcPcdTkMNg3fTxBusO5FLBOomptkRp7xzYMp6UY919vJ2oIEVWMC3VLxb3ta0kp0FXYebbn77681y8DOj007ZQrLRc9"
 
 views_blueprint = Blueprint("views_blueprint",__name__)
 
@@ -66,11 +69,14 @@ def dodaj_u_korpu(prod_id):
 def kosarica():
     if 'korpa' in session:
         proizvodi = session['korpa']
+        ukupna_cena = 0
+        for p in proizvodi:
+            ukupna_cena += p['price_data']['unit_amount']
         if len(proizvodi) == 0:
             proizvodi = None
     else:
         proizvodi = None
-    return render_template("kupovina/checkout.html",proizvodi=proizvodi)
+    return render_template("kupovina/checkout.html",proizvodi=proizvodi,ukupna_cena=ukupna_cena)
 
 
 
@@ -80,17 +86,20 @@ def kupovina_podaci():
     if session.get('korpa'):
         form = PodaciForm()
         korisnik_podaci = Podaci.query.filter_by(user_id=current_user.id).first()
-        if korisnik_podaci is not None:
-            form.ime.data = korisnik_podaci.ime
-            form.prezime.data = korisnik_podaci.prezime
-            form.broj_telefona.data = korisnik_podaci.broj_telefona
-            form.ulica.data = korisnik_podaci.adresa
-            form.kucni_broj.data = korisnik_podaci.broj_ulice
-            form.grad.data = korisnik_podaci.grad
-            form.postanski_broj.data = korisnik_podaci.postanski_broj
 
-        
         if request.method == "POST" and form.is_submitted():
+            if korisnik_podaci is not None:
+                korisnik_podaci.ime = form.ime.data
+                korisnik_podaci.prezime = form.prezime.data
+                korisnik_podaci.broj_telefona = form.broj_telefona.data
+                korisnik_podaci.adresa = form.ulica.data
+                korisnik_podaci.broj_ulice = form.kucni_broj.data
+                korisnik_podaci.drzava = form.drzava.data
+                korisnik_podaci.grad = form.grad.data
+                korisnik_podaci.postanski_broj = form.postanski_broj.data
+                db.session.commit()
+                return redirect(url_for('.kupovina'))
+
             if korisnik_podaci is None:
                 podaci = Podaci(ime=form.ime.data,prezime=form.prezime.data,\
                 broj_telefona=form.broj_telefona.data,adresa=form.ulica.data,
@@ -99,26 +108,80 @@ def kupovina_podaci():
                 db.session.add(podaci)
                 db.session.commit()
                 return redirect(url_for('.kupovina'))
-
-            return redirect(url_for('.kupovina'))
             
-        return render_template("kupovina/placanje.html",form=form)
+        else:
+            if korisnik_podaci is not None:
+                form.ime.data = korisnik_podaci.ime
+                form.prezime.data = korisnik_podaci.prezime
+                form.broj_telefona.data = korisnik_podaci.broj_telefona
+                form.ulica.data = korisnik_podaci.adresa
+                form.kucni_broj.data = korisnik_podaci.broj_ulice
+                form.grad.data = korisnik_podaci.grad
+                form.postanski_broj.data = korisnik_podaci.postanski_broj
+
+            return render_template("kupovina/placanje.html",form=form,korisnik_podaci=korisnik_podaci)
     else:
         return redirect(url_for('.home'))
 
 
 
+
 @views_blueprint.route('/kosarica/kupi', methods=['GET','POST'])
 def kupovina():
-    korpa = session['korpa']
-    checkout_session = stripe.checkout.Session.create(
+    load_user = User.query.filter_by(id=current_user.id).first()
+    print(load_user.customer_id)
+    if load_user.customer_id is None:
+        podaci = Podaci.query.filter_by(user_id=current_user.id).first()
+        customer = stripe.Customer.create(
+            address={
+                'city':podaci.grad,
+                'line1':podaci.adresa,
+                'line2':podaci.broj_ulice,
+                'postal_code':podaci.postanski_broj
+            },
+            name = f'{podaci.ime} {podaci.prezime}',
+            phone=podaci.broj_telefona,
+            email = current_user.email
+        )
+        load_user.customer_id = customer['id']
+        db.session.commit()
+
+        korpa = session['korpa']
+        checkout_session = stripe.checkout.Session.create(
         line_items=korpa,
         payment_method_types=['card'],
         mode='payment',
-        success_url=request.host_url + '/narudzba/uspesno',
-        cancel_url=request.host_url +  '/narudzba/neuspesno'
+        customer=customer['id'],
+        success_url=request.host_url + 'narudzba/uspesno',
+        cancel_url=request.host_url +  'narudzba/neuspesno'
+    )
+        return redirect(checkout_session.url)
+    else:
+        podaci_update = Podaci.query.filter_by(user_id=current_user.id).first()
+        stripe.Customer.modify(
+            current_user.customer_id,
+            address={
+                'city':podaci_update.grad,
+                'line1':podaci_update.adresa,
+                'line2':podaci_update.broj_ulice,
+                'postal_code':podaci_update.postanski_broj
+            },
+            name = f'{podaci_update.ime} {podaci_update.prezime}',
+            phone=podaci_update.broj_telefona,
+            email = current_user.email
+        )
+        korpa = session['korpa']
+        checkout_session = stripe.checkout.Session.create(
+        line_items=korpa,
+        payment_method_types=['card'],
+        mode='payment',
+        customer=current_user.customer_id,
+        success_url=request.host_url + 'narudzba/uspesno',
+        cancel_url=request.host_url +  'narudzba/neuspesno'
     )
     return redirect(checkout_session.url)
+
+
 
 
 @views_blueprint.route('/ocisti-kosaricu',methods=['POST'])
@@ -147,15 +210,26 @@ def ocisti_pojedinacni_proizvod(prod_naziv):
     return jsonify(session['kolicina'])
 
 
-@views_blueprint.route('/narudzdba/uspesno')
+@views_blueprint.route('/narudzba/uspesno')
 def uspesno():
-    for sess in session['korpa']:
-        print(sess)
-        #dodati u tabelu
+    proizvodi = session['korpa']
+    ukupna_cena = 0
+    for p in proizvodi:
+        ukupna_cena += p['price_data']['unit_amount']
+    send_purchase_email(render_template('kupovina/prikaz_narudzbe_email.html',proizvodi=proizvodi,ukupna_cena=ukupna_cena))
+    session.pop('korpa',None)
+    session.pop('kolicina',None)
     return render_template('kupovina/success.html')
 
 
-@views_blueprint.route('/narudzdba/neuspesno')
+@views_blueprint.route('/narudzba/neuspesno')
 def neuspesno():
     return render_template('kupovina/cancel.html')
 
+@views_blueprint.route('/test')
+def test():
+    proizvodi = session['korpa']
+    ukupna_cena = 0
+    for p in proizvodi:
+        ukupna_cena += p['price_data']['unit_amount']
+    return render_template('kupovina/prikaz_narudzbe_email.html',proizvodi=proizvodi,ukupna_cena=ukupna_cena)

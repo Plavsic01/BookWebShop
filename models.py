@@ -8,7 +8,7 @@ class User(db.Model,UserMixin):
     email = db.Column(db.String(50),unique=True,nullable=False)
     username = db.Column(db.String(20),unique=True,nullable=False)
     password = db.Column(db.String(256),nullable=False)
-    # avatar = db.Column(db.LargeBinary,nullable=True)
+    customer_id = db.Column(db.String(256),nullable=True)
     is_admin = db.Column(db.Boolean,server_default=expression.false(),nullable=False)
     date_created = db.Column(db.DateTime(timezone=True),server_default=func.now())
     podaci_usera = db.relationship('Podaci',cascade="all,delete",backref='user')
